@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/mapmode_normal" android:id="@+id/mnu_mapmode_normal"/>
+    <item android:title="@string/mapmode_satellite" android:id="@+id/mnu_mapmode_satellite"/>
+    <item android:title="@string/mapmode_hybrid" android:id="@+id/mnu_mapmode_hybrid"/>
+</menu>

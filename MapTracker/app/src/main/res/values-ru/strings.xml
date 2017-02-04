@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Map Tracker</string>
+    <string name="title_activity_maps">Карта</string>
+    <string name="show_track">Показать маршрут</string>
+    <string name="btn_show_track">Показать маршрут</string>
+    <string name="error_no_points_data">Данные для построения маршрута отсутствуют. Попробуйте еще раз.</string>
+    <string name="mapmode_normal">Стандартный режим карты</string>
+    <string name="mapmode_satellite">Спутниковый режим карты</string>
+    <string name="mapmode_hybrid">Гибридный режим карты</string>
+    <string name="point_a">Старт</string>
+    <string name="point_b">Финиш</string>
+    <string name="first_marker">Москва</string>
+</resources>

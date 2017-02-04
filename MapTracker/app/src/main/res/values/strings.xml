@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Map Tracker</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="show_track">Show track</string>
+    <string name="btn_show_track">Show track</string>
+    <string name="error_no_points_data">There no data for building track.</string>
+    <string name="colorWalk">#40E0D0</string>
+    <string name="colorFastWalk">#008000</string>
+    <string name="colorRun">#FFFF00</string>
+    <string name="colorFastRun">#FF0000</string>
+    <string name="mapmode_normal">Normal mode</string>
+    <string name="mapmode_satellite">Satellite mode</string>
+    <string name="mapmode_hybrid">Hybrid mode</string>
+    <string name="point_a">Start point</string>
+    <string name="point_b">Finish point</string>
+    <string name="first_marker">Moscow</string>
+</resources>
