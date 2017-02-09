@@ -3,7 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="show_track">Show track</string>
     <string name="btn_show_track">Show track</string>
-    <string name="error_no_points_data">There no data for building track.</string>
+    <string name="error_no_points_data">There no data for building track. Maybe wrong track number?</string>
     <string name="colorWalk">#40E0D0</string>
     <string name="colorFastWalk">#008000</string>
     <string name="colorRun">#FFFF00</string>
@@ -14,4 +14,9 @@
     <string name="point_a">Start point</string>
     <string name="point_b">Finish point</string>
     <string name="first_marker">Moscow</string>
+    <string name="hint_enter_track_number">Please enter track number...</string>
+    <string name="dialog_track_number_title">Please enter number of track to display</string>
+    <string name="dialog_btn_cancel">Cancel</string>
+    <string name="dialog_btn_show">Show</string>
+    <string name="error_too_much_track_points">Too much track points to build track.</string>
 </resources>

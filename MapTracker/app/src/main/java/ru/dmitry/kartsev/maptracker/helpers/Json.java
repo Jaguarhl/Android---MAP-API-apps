@@ -29,20 +29,21 @@ public class Json {
     public static final String LOG_TAG = "JSON";
     public static final String JASON_ARRAY_APOINTS = "aPoints";
     private Context mContext;
+    private MapsActivity mapsActivity;
     @Getter
     private ArrayList<APoint> trackPoints;
     private RequestQueue requestQueue;
 
-    public Json(Context context, ArrayList<APoint> points) {
-        this.mContext = context;
+    public Json(MapsActivity mapsActivity, ArrayList<APoint> points) {
+        this.mContext = mapsActivity.getBaseContext();
         this.trackPoints = points;
-        requestQueue = Volley.newRequestQueue(context);
-        // let's start to fetch data from Json
-        fetchData();
+        this.mapsActivity = mapsActivity;
+        requestQueue = Volley.newRequestQueue(mContext);
     }
 
-    private void fetchData() {
-        StringRequest request = new StringRequest(Request.Method.GET, MapsActivity.getTrackUrl(),
+    public void fetchData(String url) {
+        // let's start to fetch data from Json
+        StringRequest request = new StringRequest(Request.Method.GET, url,
                 onPostsLoaded, onPostsError);
 
         requestQueue.add(request);
@@ -72,6 +73,10 @@ public class Json {
                     point.setCourse(aPoint.getInt(6));
                     trackPoints.add(point);
                 }
+                // updating trackPoints for main activity
+                mapsActivity.setTrackPoints(trackPoints);
+                // displaying track
+                mapsActivity.drawTrack();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
