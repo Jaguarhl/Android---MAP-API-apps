@@ -185,39 +185,64 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void drawTrack() {
-        if (trackPoints.size() != 0/* && trackPoints.size() <= MAXIMUM_TRACK_POINTS_TO_VIEW*/) {
+        if (trackPoints.size() != 0) {
             List<LatLng> routePoints = new ArrayList<>();
+            List<LatLng> trackPart = new ArrayList<>();
             if (trackPoints.size() > 0 && showTrack) {
+                // clear map from previous objects
                 mMap.clear();
-                int iterator = 1;
-                if(trackPoints.size() > MAXIMUM_TRACK_POINTS_TO_VIEW) {
-                    iterator = trackPoints.size() / MAXIMUM_TRACK_POINTS_TO_VIEW;
-                }
-                for (int i = 0; i < trackPoints.size(); i += iterator) {
+                int trackSpeedPart, trackSpeedPartLast = 0;
+                for (int i = 0; i < trackPoints.size(); i ++) {
                     if(i > trackPoints.size()) i = trackPoints.size();
                     int clr = MapsActivity.this.getResources().getColor(R.color.colorFastRun);
+                    boolean addTrackPart = false;
                     if (trackPoints.get(i).getSpeed() >= 0 && trackPoints.get(i).getSpeed() < 5) {
-                        clr = MapsActivity.this.getResources().getColor(R.color.colorWalk);
+                        trackSpeedPart = 5;
+                        if(trackSpeedPart != trackSpeedPartLast) {
+                            clr = MapsActivity.this.getResources().getColor(R.color.colorWalk);
+                            addTrackPart = true;
+                        }
                     } else if (trackPoints.get(i).getSpeed() >= 5 && trackPoints.get(i).getSpeed() < 10) {
-                        clr = MapsActivity.this.getResources().getColor(R.color.colorFastWalk);
+                        trackSpeedPart = 6;
+                        if(trackSpeedPart != trackSpeedPartLast) {
+                            clr = MapsActivity.this.getResources().getColor(R.color.colorFastWalk);
+                            addTrackPart = true;
+                        }
                     } else if (trackPoints.get(i).getSpeed() >= 10 && trackPoints.get(i).getSpeed() < 20) {
-                        clr = MapsActivity.this.getResources().getColor(R.color.colorRun);
+                        trackSpeedPart = 7;
+                        if(trackSpeedPart != trackSpeedPartLast) {
+                            clr = MapsActivity.this.getResources().getColor(R.color.colorRun);
+                            addTrackPart = true;
+                        }
+                    } else {
+                        trackSpeedPart = 8;
+                        if(trackSpeedPart != trackSpeedPartLast) {
+                            addTrackPart = true;
+                        }
                     }
-                    routePoints.add(new LatLng(trackPoints.get(i).getLatitude(), trackPoints.get(i).getLongitude()));
-                    if (i > 0) {
-                        mMap.addPolyline(new PolylineOptions()
-                                .add(new LatLng(trackPoints.get(i - iterator).getLatitude(),
-                                        trackPoints.get(i - iterator).getLongitude()),
-                                        new LatLng(trackPoints.get(i).getLatitude(),
-                                                trackPoints.get(i).getLongitude()))
-                                .color(clr)
-                                .width(7.5f));
+                    trackSpeedPartLast = trackSpeedPart;
+                    routePoints.add(new LatLng(trackPoints.get(i).getLatitude(),
+                            trackPoints.get(i).getLongitude()));
+                    trackPart.add(new LatLng(trackPoints.get(i).getLatitude(),
+                            trackPoints.get(i).getLongitude()));
+                    if(addTrackPart) {
+                        if (i > 0) {
+                            mMap.addPolyline(new PolylineOptions()
+                                    .addAll(trackPart)
+                                    .color(clr)
+                                    // we are store width size of stroke in resources string
+                                    .width(Float.parseFloat(getResources().getString(R.string.stroke_width))));
+                        }
+                        trackPart = new ArrayList<>();
+                        // adding last point to avoid spaces between track parts
+                        trackPart.add(new LatLng(trackPoints.get(i).getLatitude(),
+                                trackPoints.get(i).getLongitude()));
                     }
                     if (i == 0) {
                         mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
                                 trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_a)));
                     }
-                    if (i >= trackPoints.size() - iterator) {
+                    if (i >= trackPoints.size() - 1) {
                         mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
                                 trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_b)));
                     }
@@ -234,12 +259,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // if we now ready for drawing track, than letting user to see track next time
                 showTrack = false;
             }
-        } /*else if(trackPoints.size() > MAXIMUM_TRACK_POINTS_TO_VIEW) {
-            // Optimizing view work
-            Log.d(LOG_TAG, "Too much track points (" + trackPoints.size() + ") to draw track.");
-            Toast.makeText(getBaseContext(), getResources().getString(R.string.error_too_much_track_points),
-                    Toast.LENGTH_LONG).show();
-        } */else {
+        } else {
             Toast.makeText(getBaseContext(), getResources().getString(R.string.error_no_points_data),
                     Toast.LENGTH_LONG).show();
         }

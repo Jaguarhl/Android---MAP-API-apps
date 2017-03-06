@@ -19,4 +19,5 @@
     <string name="dialog_btn_cancel">Cancel</string>
     <string name="dialog_btn_show">Show</string>
     <string name="error_too_much_track_points">Too much track points to build track.</string>
+    <string name="stroke_width">7.5</string>
 </resources>
