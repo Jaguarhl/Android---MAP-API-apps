@@ -2,14 +2,9 @@ package ru.dmitry.kartsev.maptracker;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
@@ -28,21 +23,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.dmitry.kartsev.maptracker.helpers.Json;
 import ru.dmitry.kartsev.maptracker.model.APoint;
-import ru.dmitry.kartsev.maptracker.model.TrackPoints;
 
 import static android.app.PendingIntent.getActivity;
 
@@ -193,7 +184,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 mMap.clear();
                 int trackSpeedPart, trackSpeedPartLast = 0;
                 for (int i = 0; i < trackPoints.size(); i ++) {
-                    if(i > trackPoints.size()) i = trackPoints.size();
                     int clr = MapsActivity.this.getResources().getColor(R.color.colorFastRun);
                     boolean addTrackPart = false;
                     if (trackPoints.get(i).getSpeed() >= 0 && trackPoints.get(i).getSpeed() < 5) {
@@ -226,35 +216,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     trackPart.add(new LatLng(trackPoints.get(i).getLatitude(),
                             trackPoints.get(i).getLongitude()));
                     if(addTrackPart) {
-                        if (i > 0) {
-                            mMap.addPolyline(new PolylineOptions()
-                                    .addAll(trackPart)
-                                    .color(clr)
-                                    // we are store width size of stroke in resources string
-                                    .width(Float.parseFloat(getResources().getString(R.string.stroke_width))));
-                        }
-                        trackPart = new ArrayList<>();
-                        // adding last point to avoid spaces between track parts
-                        trackPart.add(new LatLng(trackPoints.get(i).getLatitude(),
-                                trackPoints.get(i).getLongitude()));
+                        trackPart = addNewPartToTrack(i, trackPart, clr);
                     }
-                    if (i == 0) {
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
-                                trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_a)));
-                    }
-                    if (i >= trackPoints.size() - 1) {
-                        mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
-                                trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_b)));
-                    }
+                    addStartEndMarkers(i);
                 }
-                // let's view all track on one screen
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (LatLng latLng : routePoints) {
-                    builder.include(latLng);
-                }
-                final LatLngBounds bounds = builder.build();
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, LATLNG_BOUNDS);
-                mMap.moveCamera(cu);
+                showWholeTrackOnOneScreen(routePoints);
             } else {
                 // if we now ready for drawing track, than letting user to see track next time
                 showTrack = false;
@@ -264,6 +230,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Toast.LENGTH_LONG).show();
         }
         progressBar.setVisibility(ProgressBar.INVISIBLE);
+    }
+
+    private void showWholeTrackOnOneScreen(List<LatLng> routePoints) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng latLng : routePoints) {
+            builder.include(latLng);
+        }
+        final LatLngBounds bounds = builder.build();
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, LATLNG_BOUNDS);
+        mMap.moveCamera(cu);
+    }
+
+    private void addStartEndMarkers(int i) {
+        if (i == 0) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
+                    trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_a)));
+        }
+        if (i >= trackPoints.size() - 1) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
+                    trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_b)));
+        }
+    }
+
+    private List<LatLng> addNewPartToTrack(int i, List<LatLng> trackPart, int clr) {
+        if (i > 0) {
+            mMap.addPolyline(new PolylineOptions()
+                    .addAll(trackPart)
+                    .color(clr)
+                    // we are store width size of stroke in resources string
+                    .width(Float.parseFloat(getResources().getString(R.string.stroke_width))));
+        }
+        trackPart = new ArrayList<>();
+        // adding last point to avoid spaces between track parts
+        trackPart.add(new LatLng(trackPoints.get(i).getLatitude(),
+                trackPoints.get(i).getLongitude()));
+        return trackPart;
     }
 
     /**
