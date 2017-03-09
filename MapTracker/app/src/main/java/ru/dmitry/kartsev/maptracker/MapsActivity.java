@@ -218,8 +218,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     if(addTrackPart) {
                         trackPart = addNewPartToTrack(i, trackPart, clr);
                     }
-                    addStartEndMarkers(i);
                 }
+                addStartEndMarkers();
                 showWholeTrackOnOneScreen(routePoints);
             } else {
                 // if we now ready for drawing track, than letting user to see track next time
@@ -242,14 +242,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.moveCamera(cu);
     }
 
-    private void addStartEndMarkers(int i) {
-        if (i == 0) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
-                    trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_a)));
-        }
-        if (i >= trackPoints.size() - 1) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(i).getLatitude(),
-                    trackPoints.get(i).getLongitude())).title(getResources().getString(R.string.point_b)));
+    private void addStartEndMarkers() {
+        if(trackPoints.size() > 1) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(0).getLatitude(),
+                    trackPoints.get(0).getLongitude())).title(getResources().getString(R.string.point_a)));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(trackPoints.get(trackPoints.size() - 1).getLatitude(),
+                    trackPoints.get(trackPoints.size() - 1).getLongitude())).title(getResources()
+                    .getString(R.string.point_b)));
         }
     }
 
